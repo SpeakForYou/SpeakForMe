@@ -6,31 +6,36 @@ let favoritesData = JSON.parse(localStorage.getItem('speechFavs')) || [];
 const smartData = ["صباح الخير", "مساء الخير", "Hello", "How are you?"];
 
 function loadVoices() {
-    // جلب كل الأصوات المتاحة في الجهاز
-    let availableVoices = window.speechSynthesis.getVoices();
-    
+    let voices = window.speechSynthesis.getVoices();
     const select = document.getElementById("voiceSelect");
     if (!select) return;
 
-    // تصفية الأصوات لإظهار العربية والإنجليزية فقط
-    const filteredVoices = availableVoices.filter(v => 
-        v.lang.startsWith('ar') || v.lang.startsWith('en')
-    );
+    // تصفية الأصوات (عربي وإنجليزي)
+    let filtered = voices.filter(v => v.lang.startsWith('ar') || v.lang.startsWith('en'));
 
-    if (filteredVoices.length > 0) {
-        select.innerHTML = filteredVoices
-            .map(v => `<option value="${v.name}">${v.name} (${v.lang})</option>`)
-            .join('');
+    if (filtered.length === 0 && voices.length > 0) {
+        // إذا وجد أصوات ولكن ليس فيها عربي أو إنجليزي
+        select.innerHTML = `<option value="">⚠️ لا يوجد أصوات عربية مثبتة على هاتفك</option>`;
+    } else if (filtered.length > 0) {
+        select.innerHTML = filtered.map((v, i) => 
+            `<option value="${v.name}">${v.name} (${v.lang})</option>`
+        ).join('');
         
-        // محاولة اختيار أول صوت عربي تلقائياً
-        const arabicVoice = filteredVoices.find(v => v.lang.startsWith('ar'));
-        selectedVoice = arabicVoice || filteredVoices[0];
-        select.value = selectedVoice.name;
-    } else {
-        // إذا لم تظهر أصوات، نعرض رسالة تنبيه
-        select.innerHTML = `<option value="">⚠️ لم يتم العثور على أصوات عربية/إنجليزية</option>`;
+        // محاولة اختيار صوت عربي تلقائياً
+        const arabic = filtered.find(v => v.lang.startsWith('ar'));
+        if (arabic) {
+            selectedVoice = arabic;
+            select.value = arabic.name;
+        } else {
+            selectedVoice = filtered[0];
+        }
     }
 }
+
+// حل مشكلة تأخر تحميل الأصوات في أندرويد وكروم
+window.speechSynthesis.onvoiceschanged = loadVoices;
+// تشغيلها مرة فورية احتياطاً
+loadVoices();
 
 // هذا السطر يضمن تشغيل الدالة فور تحميل المتصفح للأصوات
 if (window.speechSynthesis.onvoiceschanged !== undefined) {
