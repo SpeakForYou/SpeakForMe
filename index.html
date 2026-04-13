@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpeakForMe | التواصل الذكي</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="Images/Weblogo.jpg" type="image/png">
+</head>
+<body>
+
+<div id="onboarding" class="overlay hidden">
+    <div class="card glass instruction-modal">
+        <h2>🎙️ تفعيل الأصوات</h2>
+        <p>لكي يعمل التطبيق بشكل صحيح، يرجى التأكد من تحميل الأصوات العربية والإنجليزية في إعدادات جهازك.</p>
+        
+        <div class="steps">
+            <div class="step">
+                <strong>💡 نصيحة للغة العربية:</strong>
+                <span>استخدم <b>التشكيل</b> (مثل الفتحة والضمة) للحصول على نطق سليم.</span>
+            </div>
+        </div>
+
+        <button class="primary-btn" onclick="closeOnboarding()">فهمت، ابدأ الآن</button>
+    </div>
+</div>
+
+<header>
+    <div class="logo-container">
+        <img src="Images/Logo.png" alt="SpeakForMe Logo" class="header-logo">
+    </div>
+    <button class="icon-btn" onclick="toggleSettings()">⚙️</button>
+</header>
+
+<div class="container">
+    <div id="settings" class="panel hidden">
+        <h3>⚙️ الإعدادات</h3>
+        <div class="setting-item">
+            <label>🎤 اختر الصوت (Arabic / English)</label>
+            <select id="voiceSelect"></select>
+        </div>
+        <div class="setting-item">
+            <label>🔠 حجم الخط</label>
+            <input type="range" min="14" max="30" value="18" id="fontSlider" oninput="setFont(this.value)">
+        </div>
+        <div class="setting-item">
+            <label>🎨 المظهر</label>
+            <select id="themeSelect" onchange="setTheme(this.value)">
+                <option value="dark">داكن (Dark)</option>
+                <option value="light">فاتح (Light)</option>
+            </select>
+        </div>
+        <br>
+        <br>
+    </div>
+
+    <div class="card main-input-card glass">
+        <input id="textInput" placeholder="اكتب هنا..." autocomplete="off">
+        <div class="button-group">
+            <button class="primary-btn" onclick="speakInput()">🔊 تشغيل</button>
+            <button class="fav-btn" onclick="saveToFav()">⭐ حفظ</button>
+        </div>
+        <div id="suggestBox" class="suggestions"></div>
+    </div>
+
+    <section>
+        <h3>📌 جمل سريعة</h3>
+        <div class="grid">
+            <div class="card quick-card glass" onclick="quickSpeak('أنا عايز أكل')">🍔 أكل</div>
+            <div class="card quick-card glass" onclick="quickSpeak('أنا عايز أشرب')">🥤 شرب</div>
+            <div class="card quick-card glass" onclick="quickSpeak('Hello, how are you?')">👋 Greeting</div>
+            <div class="card quick-card glass" onclick="quickSpeak('I need help')">🆘 Help</div>
+        </div>
+    </section>
+
+    <section id="favSection">
+        <h3>⭐ المفضلات</h3>
+        <div id="favorites" class="horizontal-list"></div>
+    </section>
+
+    <section>
+        <h3>🧾 السجل</h3>
+        <div id="history" class="history-list"></div>
+    </section>
+
+    <button class="danger-btn" onclick="speak('أنا في خطر ساعدني فوراً')">🚨 نداء طوارئ</button>
+</div>
+
+<script src="scripts.js"></script>
+</body>
+</html>
