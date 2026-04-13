@@ -6,28 +6,36 @@ let favoritesData = JSON.parse(localStorage.getItem('speechFavs')) || [];
 const smartData = ["صباح الخير", "مساء الخير", "Hello", "How are you?"];
 
 function loadVoices() {
-    allVoices = window.speechSynthesis.getVoices();
+    // جلب كل الأصوات المتاحة في الجهاز
+    let availableVoices = window.speechSynthesis.getVoices();
+    
     const select = document.getElementById("voiceSelect");
     if (!select) return;
 
-    const filteredVoices = allVoices.filter(v => v.lang.startsWith('ar') || v.lang.startsWith('en'));
+    // تصفية الأصوات لإظهار العربية والإنجليزية فقط
+    const filteredVoices = availableVoices.filter(v => 
+        v.lang.startsWith('ar') || v.lang.startsWith('en')
+    );
 
     if (filteredVoices.length > 0) {
         select.innerHTML = filteredVoices
             .map(v => `<option value="${v.name}">${v.name} (${v.lang})</option>`)
             .join('');
         
+        // محاولة اختيار أول صوت عربي تلقائياً
         const arabicVoice = filteredVoices.find(v => v.lang.startsWith('ar'));
         selectedVoice = arabicVoice || filteredVoices[0];
         select.value = selectedVoice.name;
+    } else {
+        // إذا لم تظهر أصوات، نعرض رسالة تنبيه
+        select.innerHTML = `<option value="">⚠️ لم يتم العثور على أصوات عربية/إنجليزية</option>`;
     }
 }
 
-window.speechSynthesis.onvoiceschanged = loadVoices;
-
-document.getElementById("voiceSelect").addEventListener("change", (e) => {
-    selectedVoice = allVoices.find(v => v.name === e.target.value);
-});
+// هذا السطر يضمن تشغيل الدالة فور تحميل المتصفح للأصوات
+if (window.speechSynthesis.onvoiceschanged !== undefined) {
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+}
 function speak(text) {
     if (!text) return;
     window.speechSynthesis.cancel();
