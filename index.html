@@ -1,78 +1,100 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpeakForMe | التواصل الذكي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SpeakForMe Pro | Mobile AI</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="Weblogo.jpg" type="image/png"></head>
+    <link rel="icon" href="Weblogo.jpg" type="image/png">
+</head>
 <body>
-
-<div id="onboarding" class="overlay hidden">
-    <div class="card glass instruction-modal">
-        <h2>🎙️ تفعيل الأصوات</h2>
-        <p>لكي يعمل التطبيق بشكل صحيح، يرجى التأكد من تحميل الأصوات العربية والإنجليزية من إعدادات الهاتف (Text-to-Speech).</p>
-        <button class="primary-btn" onclick="closeOnboarding()">فهمت، ابدأ الآن</button>
-    </div>
-</div>
 
 <header>
     <div class="logo-container">
-        <img src="Logo.png" alt="SpeakForMe Logo" class="header-logo" id="appLogo">
+        <img src="Logo.png" alt="Logo" class="header-logo" id="appLogo">
     </div>
     <button class="icon-btn" onclick="toggleSettings()">⚙️</button>
 </header>
 
 <div class="container">
     <div id="settings" class="panel hidden glass">
-        <h3>⚙️ الإعدادات</h3>
+        <h3>Settings</h3>
         <div class="setting-item">
-            <label>🎤 اختر الصوت (عربي / English)</label>
+            <label>🎤 Voice</label>
             <select id="voiceSelect"></select>
         </div>
+        
         <div class="setting-item">
-            <label>🔠 حجم الخط</label>
-            <input type="range" min="14" max="32" value="18" id="fontSlider" oninput="setFont(this.value)">
+            <label>🔠 Font Size</label>
+            <input type="range" min="14" max="30" value="18" id="fontSlider" oninput="setFont(this.value)">
         </div>
+
+        <div class="setting-grid">
+            <div class="setting-item">
+                <label>⏩ Speed</label>
+                <input type="range" min="0.5" max="2" step="0.1" value="1" id="rateSlider">
+            </div>
+            <div class="setting-item">
+                <label>🎼 Pitch</label>
+                <input type="range" min="0" max="2" step="0.1" value="1" id="pitchSlider">
+            </div>
+        </div>
+
+        <div class="setting-row">
+            <label>🧹 Auto-Clear</label>
+            <input type="checkbox" id="autoClear">
+        </div>
+        
         <div class="setting-item">
-            <label>🎨 المظهر</label>
-            <select id="themeSelect" onchange="setTheme(this.value)">
-                <option value="dark">داكن (Dark)</option>
-                <option value="light">فاتح (Light)</option>
+            <label>🎨 Theme</label>
+            <select onchange="setTheme(this.value)" id="themeSelect">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
             </select>
         </div>
     </div>
-    <br>
-    <div class="card main-input-card glass">
-        <input id="textInput" placeholder="اكتب جملة هنا..." autocomplete="off">
-        <div class="button-group">
-            <button class="primary-btn" onclick="speakInput()">🔊 تشغيل</button>
-            <button class="fav-btn" onclick="saveToFav()">⭐ حفظ</button>
+
+    <div class="prediction-wrapper">
+        <div class="prediction-bar">
+            <button class="chip" onclick="addText('I want ')">I want</button>
+            <button class="chip" onclick="addText('Please ')">Please</button>
+            <button class="chip" onclick="addText('Help ')">Help</button>
+            <button class="chip" onclick="addText('Where ')">Where</button>
+            <button class="chip" onclick="addText('Can you ')">Can you</button>
         </div>
-        <div id="suggestBox" class="suggestions"></div>
+    </div>
+
+    <div class="card main-input-card glass">
+        <textarea id="textInput" placeholder="Type here..." rows="2"></textarea>
+        
+        <div class="button-group">
+            <button class="primary-btn" onclick="speakInput()">🔊 SPEAK</button>
+            <button class="fav-btn" onclick="saveToFav()">⭐</button>
+        </div>
     </div>
 
     <section>
-        <h3>📌 جمل سريعة</h3>
-        <div class="grid">
-            <div class="card quick-card glass" onclick="quickSpeak('أنا عايز أكل')">🍔 أكل</div>
-            <div class="card quick-card glass" onclick="quickSpeak('أنا عايز أشرب')">🥤 شرب</div>
-            <div class="card quick-card glass" onclick="quickSpeak('Hello, how are you?')">👋 Greeting</div>
-            <div class="card quick-card glass" onclick="quickSpeak('محتاج مساعدة')">🆘 مساعدة</div>
+        <h3>Emoji Talk</h3>
+        <div class="emoji-grid">
+            <div class="emoji-item glass" onclick="speak('I love this!')">❤️</div>
+            <div class="emoji-item glass" onclick="speak('I am hungry')">😋</div>
+            <div class="emoji-item glass" onclick="speak('No, stop')">🚫</div>
+            <div class="emoji-item glass" onclick="speak('Happy')">😊</div>
+            <div class="emoji-item glass" onclick="speak('Tired')">😴</div>
         </div>
     </section>
 
-    <section id="favSection">
-        <h3>⭐ المفضلات</h3>
-        <div id="favorites" class="horizontal-list"></div>
-    </section>
+    <div class="lists-wrapper">
+        <section id="favSection">
+            <h3>Favorites</h3>
+            <div id="favorites" class="horizontal-list"></div>
+        </section>
 
-    <section>
-        <h3>🧾 السجل</h3>
-        <div id="history" class="history-list"></div>
-    </section>
-
-    <button class="danger-btn" onclick="speak('أنا في خطر ساعدني فوراً')">🚨 نداء طوارئ</button>
+        <section>
+            <h3>History</h3>
+            <div id="history" class="history-list"></div>
+        </section>
+    </div>
 </div>
 
 <script src="scripts.js"></script>

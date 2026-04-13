@@ -1,84 +1,307 @@
 :root {
-    --bg-color: #0B1220;
-    --card-bg: rgba(255, 255, 255, 0.05);
-    --text-color: #ffffff;
-    --accent: linear-gradient(90deg, #2F80FF, #7C3AED);
+    /* Dark Theme Colors - Professional Deep Blue */
+    --bg-color: #050810;
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --text-color: #f8fafc;
+    --accent: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    --accent-hover: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+    --danger: #ef4444;
+    --glass-border: rgba(255, 255, 255, 0.1);
     --main-font-size: 18px;
 }
 
 .light-theme {
-    --bg-color: #f1f5f9;
+    --bg-color: #f8fafc;
     --text-color: #0f172a;
-    --card-bg: rgba(255, 255, 255, 0.9);
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(0, 0, 0, 0.1);
 }
 
 body {
     margin: 0;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: var(--bg-color);
     color: var(--text-color);
+    line-height: 1.6;
+    transition: background 0.3s ease, color 0.3s ease;
     font-size: var(--main-font-size);
-    transition: 0.3s;
-    overflow-x: hidden;
 }
 
-input, select, button, .card { font-size: inherit; }
+.container {
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 20px 15px;
+}
 
-.container { max-width: 600px; margin: 0 auto; padding: 20px; }
-
+/* --- Header & Logo --- */
 header {
     display: flex;
     justify-content: space-between;
-    padding: 10px 20px;
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    position: sticky; top: 0; z-index: 100;
+    align-items: center;
+    padding: 15px 25px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--glass-border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-/* حركة اللوجو النشط */
 .header-logo {
-    height: 50px;
-    width: auto;
-    transition: 0.3s ease;
+    height: 42px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .speaking-active {
-    filter: drop-shadow(0 0 12px #2F80FF) brightness(1.3);
-    transform: scale(1.15);
-    animation: pulse 1.5s infinite;
+    filter: drop-shadow(0 0 20px #3b82f6);
+    transform: scale(1.1);
+    animation: pulseGlow 1.5s infinite ease-in-out;
 }
 
-@keyframes pulse {
-    50% { opacity: 0.7; transform: scale(1.1); }
+@keyframes pulseGlow {
+    0%, 100% { opacity: 1; transform: scale(1.1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
 }
 
+/* --- Controls & Inputs --- */
 .glass {
     background: var(--card-bg);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
-.card { border-radius: 16px; padding: 15px; margin-bottom: 15px; }
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-input, select {
-    width: 100%; padding: 12px; border-radius: 10px; margin-bottom: 10px;
-    background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.1);
+input[type="text"] {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--glass-border);
+    color: #fff;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
     box-sizing: border-box;
+    transition: border 0.3s;
 }
 
-.light-theme input, .light-theme select {
-    background: white; color: #0f172a; border: 1px solid #cbd5e1;
+input[type="text"]:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: rgba(0, 0, 0, 0.4);
 }
 
-button { border-radius: 10px; padding: 12px; cursor: pointer; font-weight: bold; border: none; }
-.primary-btn { background: var(--accent); color: white; width: 100%; }
-.fav-btn { background: rgba(255, 255, 255, 0.1); color: var(--text-color); width: 100%; }
-.danger-btn { background: #ef4444; color: white; width: 100%; margin-top: 20px; }
+/* --- Buttons --- */
+button {
+    font-family: inherit;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.primary-btn {
+    background: var(--accent);
+    color: white;
+    padding: 16px;
+    border-radius: 14px;
+    width: 100%;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    background: var(--accent-hover);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.fav-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+/* --- Predictive Chips --- */
+.prediction-bar {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 5px 0 20px 0;
+    scrollbar-width: none; /* Firefox */
+}
+
+.prediction-bar::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+.chip {
+    background: rgba(59, 130, 246, 0.15);
+    color: #93c5fd;
+    padding: 10px 18px;
+    border-radius: 100px;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    white-space: nowrap;
+    font-size: 0.95rem;
+}
+
+.chip:hover {
+    background: rgba(59, 130, 246, 0.25);
+    transform: scale(1.05);
+}
+
+/* --- Emoji Grid --- */
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+
+.emoji-item {
+    font-size: 2rem;
+    padding: 15px;
+    text-align: center;
+    border-radius: 18px;
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.emoji-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-5px) scale(1.1);
+    border-color: #8b5cf6;
+}
+
+/* --- Sections & Cards --- */
+h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #64748b;
+    margin-top: 30px;
+}
+
+.card {
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    transition: background 0.2s;
+}
+
+.history-list .card:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* --- Settings Panel --- */
+.panel {
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.setting-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.setting-item label { font-size: 0.9rem; font-weight: 500; }
+
+input[type="range"] {
+    width: 100%;
+    accent-color: #3b82f6;
+}
 
 .hidden { display: none !important; }
-.icon-btn { background: transparent; color: var(--text-color); font-size: 1.5em; cursor: pointer; }
 
-.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-.suggestion-chip { background: rgba(47, 128, 255, 0.2); padding: 6px 15px; border-radius: 20px; cursor: pointer; font-size: 0.8em; }
+/* Light Theme Fixes */
+.light-theme input[type="text"], 
+.light-theme select {
+    background: #fff;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+}
+
+.light-theme .chip {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+:root {
+    --bg-color: #050810;
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --text-color: #f8fafc;
+    --accent: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --main-font-size: 18px; /* Default starting size */
+}
+
+/* ... (keep body and container styles) ... */
+
+/* --- Fixed Input Box --- */
+.main-input-card {
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+#textInput {
+    width: 100%;
+    /* This ensures padding doesn't push the box out of its container */
+    box-sizing: border-box; 
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid var(--glass-border);
+    color: #ffffff;
+    
+    /* Font Recovery: Use the variable but fallback to inherited size */
+    font-size: var(--main-font-size);
+    font-family: inherit;
+    
+    margin-bottom: 15px;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+#textInput:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+#textInput::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* --- Buttons Layout --- */
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.primary-btn {
+    flex: 3; /* Makes speak button larger */
+    background: var(--accent);
+    color: white;
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.fav-btn {
+    flex: 1; /* Makes save button smaller/icon-like */
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 12px;
+}
+#textInput {
+    /* Use 'inherit' or the variable directly to ensure recovery */
+    font-size: var(--main-font-size) !important;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box; /* Prevents padding from breaking size */
+}
