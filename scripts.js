@@ -1,99 +1,94 @@
 // --- المتغيرات الأساسية ---
-let selectedVoice = null;
 let allVoices = [];
+let selectedVoice = null;
 let historyData = JSON.parse(localStorage.getItem('speechHistory')) || [];
 let favoritesData = JSON.parse(localStorage.getItem('speechFavs')) || [];
-const smartData = ["صباح الخير", "مساء الخير", "كيف حالك؟", "أنا بخير", "شكراً جزيلاً"];
+const smartData = ["صباح الخير", "مساء الخير", "كيف حالك؟", "أريد المساعدة", "شكراً جزيلاً"];
 
-// --- 1. محرك الأصوات المطور (الإجبار والانتظار) ---
+// --- 1. محرك الأصوات (تحميل وانتظار الأندرويد) ---
 function loadVoices() {
     allVoices = window.speechSynthesis.getVoices();
     const select = document.getElementById("voiceSelect");
     if (!select) return;
 
     // فلترة الأصوات (عربي وإنجليزي فقط)
-    const filteredVoices = allVoices.filter(v => 
-        v.lang.startsWith('ar') || v.lang.startsWith('en')
-    );
+    const filtered = allVoices.filter(v => v.lang.startsWith('ar') || v.lang.startsWith('en'));
 
-    if (filteredVoices.length > 0) {
-        select.innerHTML = filteredVoices
-            .map(v => `<option value="${v.name}">${v.name} (${v.lang})</option>`)
-            .join('');
+    if (filtered.length > 0) {
+        select.innerHTML = filtered.map(v => 
+            `<option value="${v.name}">${v.name} (${v.lang})</option>`
+        ).join('');
         
-        // إعطاء الأولوية لصوت عربي إذا وجد
-        const arabicVoice = filteredVoices.find(v => v.lang.startsWith('ar'));
-        selectedVoice = arabicVoice || filteredVoices[0];
+        // محاولة اختيار صوت عربي كافتراضي
+        const arabic = filtered.find(v => v.lang.startsWith('ar'));
+        selectedVoice = arabic || filtered[0];
         select.value = selectedVoice.name;
 
-        // إذا نجحنا في تحميل الأصوات، نوقف المحاولات المتكررة
-        if (filteredVoices.some(v => v.lang.startsWith('ar'))) {
+        // إذا وجدت أصوات عربية، نتوقف عن المحاولة المتكررة لتوفير البطارية
+        if (filtered.some(v => v.lang.startsWith('ar'))) {
             clearInterval(voiceRetryInterval);
         }
     }
 }
 
-// محاولة التحميل فوراً وعند التغيير
+// محاولة التحميل فوراً وعند التغيير في النظام
 window.speechSynthesis.onvoiceschanged = loadVoices;
 loadVoices();
-
-// "سر القوة": المحاولة المتكررة كل ثانية لأن أندرويد يتأخر في كشف الأصوات
+// محاولة متكررة كل ثانية (حل سحري للأندرويد)
 const voiceRetryInterval = setInterval(loadVoices, 1000);
 
-// --- 2. دالة النطق "الإجبارية" ---
+// --- 2. دالة النطق "الذكية" ---
 function speak(text) {
-    if (!text) return;
-    window.speechSynthesis.cancel(); // وقف أي نطق قديم فوراً
+    if (!text || text.trim() === "") return;
+    
+    // إلغاء أي نطق جاري حالياً لمنع التداخل
+    window.speechSynthesis.cancel();
     
     setTimeout(() => {
         const utter = new SpeechSynthesisUtterance(text);
         const logo = document.getElementById('appLogo');
 
-        // البحث عن الصوت المختار حالياً
-        const currentVoiceName = document.getElementById("voiceSelect")?.value;
-        const currentVoice = allVoices.find(v => v.name === currentVoiceName);
+        // البحث عن الصوت المختار في القائمة
+        const select = document.getElementById("voiceSelect");
+        const currentVoice = allVoices.find(v => v.name === select.value);
 
         if (currentVoice) {
             utter.voice = currentVoice;
             utter.lang = currentVoice.lang;
         } else {
-            // "القوة الضاربة": إذا لم يجد صوتاً في القائمة، أجبر المحرك على البحث عن أي صوت عربي في النظام
-            utter.lang = 'ar-SA';
+            utter.lang = 'ar-SA'; // إجبار اللغة العربية كحل أخير
         }
 
-        // إعدادات النطق
-        utter.rate = 1.0;  // السرعة
-        utter.pitch = 1.0; // النغمة
+        // سرعة ونغمة الصوت
+        utter.rate = 1.0;
+        utter.pitch = 1.0;
 
-        // تأثيرات اللوجو
+        // تأثيرات اللوجو النشط (Active Logo)
         utter.onstart = () => { if(logo) logo.classList.add('speaking-active'); };
         utter.onend = () => { if(logo) logo.classList.remove('speaking-active'); };
 
         window.speechSynthesis.speak(utter);
         addToHistory(text);
-    }, 50);
+    }, 50); 
 }
 
-// --- 3. إدارة الإعدادات والمظهر ---
-function setFont(size) {
-    document.documentElement.style.setProperty('--main-font-size', size + 'px');
-    localStorage.setItem('userFontSize', size);
+// --- 3. الربط مع المربع (حل مشكلتك هنا) ---
+function speakInput() {
+    // نجلب المربع ونأخذ قيمته "الحالية" لحظة الضغط
+    const inputField = document.getElementById("textInput");
+    const textToSpeak = inputField.value;
+
+    if (textToSpeak && textToSpeak.trim() !== "") {
+        speak(textToSpeak);
+    } else {
+        // نطق تنبيه بسيط إذا حاول المستخدم الضغط والمربع فارغ
+        speak("برجاء كتابة نص أولاً");
+    }
 }
 
-function setTheme(mode) {
-    document.body.classList.remove('light-theme');
-    if (mode === 'light') document.body.classList.add('light-theme');
-    localStorage.setItem('selectedTheme', mode);
-}
-
-function toggleSettings() {
-    document.getElementById("settings").classList.toggle("hidden");
-}
-
-// --- 4. الوظائف الإضافية ---
-function speakInput() { speak(document.getElementById("textInput").value); }
 function quickSpeak(t) { speak(t); }
 
+// --- 4. إدارة المفضلات والسجل ---
 function saveToFav() {
     const val = document.getElementById("textInput").value;
     if (val && !favoritesData.includes(val)) {
@@ -112,24 +107,45 @@ function addToHistory(text) {
 }
 
 function renderFavs() {
-    const box = document.getElementById("favorites");
-    if (box) box.innerHTML = favoritesData.map(f => 
+    const favBox = document.getElementById("favorites");
+    if(favBox) favBox.innerHTML = favoritesData.map(f => 
         `<div class="card quick-card glass" onclick="speak('${f}')">${f}</div>`).join('');
 }
 
 function renderHistory() {
-    const box = document.getElementById("history");
-    if (box) box.innerHTML = historyData.map(h => 
+    const histBox = document.getElementById("history");
+    if(histBox) histBox.innerHTML = historyData.map(h => 
         `<div class="card glass" style="opacity:0.8; cursor:pointer;" onclick="speak('${h}')">${h}</div>`).join('');
 }
 
-// --- 5. التشغيل عند التحميل ---
+// --- 5. الإعدادات والمظهر ---
+function toggleSettings() { 
+    document.getElementById("settings").classList.toggle("hidden"); 
+}
+
+function setTheme(mode) {
+    if (mode === 'light') document.body.classList.add('light-theme');
+    else document.body.classList.remove('light-theme');
+    localStorage.setItem('selectedTheme', mode);
+}
+
+function setFont(size) {
+    document.documentElement.style.setProperty('--main-font-size', size + 'px');
+    localStorage.setItem('userFontSize', size);
+}
+
+function closeOnboarding() {
+    document.getElementById('onboarding').classList.add('hidden');
+    localStorage.setItem('instructionsSeen', 'true');
+}
+
+// --- 6. التشغيل النهائي عند فتح التطبيق ---
 window.onload = () => {
     loadVoices();
     renderFavs();
     renderHistory();
     
-    // استعادة الإعدادات المحفوظة
+    // استعادة الحجم والمظهر
     const savedSize = localStorage.getItem('userFontSize') || '18';
     setFont(savedSize);
     if(document.getElementById('fontSlider')) document.getElementById('fontSlider').value = savedSize;
@@ -138,7 +154,11 @@ window.onload = () => {
     setTheme(savedTheme);
     if(document.getElementById("themeSelect")) document.getElementById("themeSelect").value = savedTheme;
 
-    // تفعيل الاقتراحات الذكية
+    if (localStorage.getItem('instructionsSeen')) {
+        document.getElementById('onboarding').classList.add('hidden');
+    }
+
+    // تفعيل الاقتراحات الذكية أثناء الكتابة
     const input = document.getElementById("textInput");
     input.addEventListener("input", (e) => {
         const val = e.target.value;

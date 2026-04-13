@@ -6,150 +6,79 @@
     --main-font-size: 18px;
 }
 
-body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--bg-color);
-    color: var(--text-color);
-    transition: 0.3s;
-    line-height: 1.6;
-    font-size: var(--main-font-size);
+.light-theme {
+    --bg-color: #f1f5f9;
+    --text-color: #0f172a;
+    --card-bg: rgba(255, 255, 255, 0.9);
 }
 
-.container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: var(--main-font-size);
+    transition: 0.3s;
+    overflow-x: hidden;
 }
+
+input, select, button, .card { font-size: inherit; }
+
+.container { max-width: 600px; margin: 0 auto; padding: 20px; }
+
 header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     padding: 10px 20px;
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-.logo-container {
-    display: flex;
-    align-items: center;
-    height: 40px;
+    position: sticky; top: 0; z-index: 100;
 }
 
+/* حركة اللوجو النشط */
 .header-logo {
-    height: 130%;
+    height: 50px;
     width: auto;
-    object-fit: contain;
     transition: 0.3s ease;
 }
+
+.speaking-active {
+    filter: drop-shadow(0 0 12px #2F80FF) brightness(1.3);
+    transform: scale(1.15);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    50% { opacity: 0.7; transform: scale(1.1); }
+}
+
 .glass {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(12px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.card {
-    border-radius: 16px;
-    padding: 15px;
-    margin-bottom: 15px;
-}
+.card { border-radius: 16px; padding: 15px; margin-bottom: 15px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 12px;
-}
-
-.quick-card {
-    text-align: center;
-    cursor: pointer;
-    font-weight: bold;
-}
 input, select {
-    width: 100%;
+    width: 100%; padding: 12px; border-radius: 10px; margin-bottom: 10px;
+    background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.1);
     box-sizing: border-box;
-    padding: 14px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: rgba(0,0,0,0.4);
-    color: white;
 }
 
-.button-group {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
+.light-theme input, .light-theme select {
+    background: white; color: #0f172a; border: 1px solid #cbd5e1;
 }
 
-button {
-    border: none;
-    border-radius: 12px;
-    padding: 12px;
-    cursor: pointer;
-    font-weight: bold;
-}
+button { border-radius: 10px; padding: 12px; cursor: pointer; font-weight: bold; border: none; }
+.primary-btn { background: var(--accent); color: white; width: 100%; }
+.fav-btn { background: rgba(255, 255, 255, 0.1); color: var(--text-color); width: 100%; }
+.danger-btn { background: #ef4444; color: white; width: 100%; margin-top: 20px; }
 
-.primary-btn { flex: 2; background: var(--accent); color: white; }
-.fav-btn { flex: 1; background: rgba(255, 255, 255, 0.1); color: white; }
-.danger-btn { width: 100%; background: linear-gradient(90deg, #ff4b2b, #ff416c); color: white; margin-top: 20px; }
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+.hidden { display: none !important; }
+.icon-btn { background: transparent; color: var(--text-color); font-size: 1.5em; cursor: pointer; }
 
-.instruction-modal { max-width: 450px; text-align: right; }
-.step { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; margin-bottom: 10px; }
-.highlight-step { border: 1px solid rgba(47, 128, 255, 0.4); background: rgba(47, 128, 255, 0.1) !important; }
-
-.suggestions { display: flex; flex-wrap: wrap; margin-top: 10px; gap: 8px; }
-.suggestion-chip { padding: 8px 16px; background: rgba(47, 128, 255, 0.1); border: 1px solid rgba(47, 128, 255, 0.2); border-radius: 20px; cursor: pointer; }
-
-.hidden { display: none; }
-/* Light Mode Variables Override */
-.light-theme {
-    --bg-color: #f8fafc;
-    --text-color: #0f172a;
-    --card-bg: rgba(0, 0, 0, 0.05);
-}
-
-.light-theme body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
-}
-
-.light-theme .glass {
-    background: rgba(0, 0, 0, 0.03);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    color: var(--text-color);
-}
-
-.light-theme input, 
-.light-theme select {
-    background: #ffffff;
-    color: #0f172a;
-    border: 1px solid #cbd5e1;
-}
-
-.light-theme h3, 
-.light-theme label {
-    color: #1e293b;
-}
-
-.light-theme .suggestion-chip {
-    background: rgba(47, 128, 255, 0.1);
-    color: #2F80FF;
-}
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.suggestion-chip { background: rgba(47, 128, 255, 0.2); padding: 6px 15px; border-radius: 20px; cursor: pointer; font-size: 0.8em; }
